@@ -8,9 +8,17 @@
     },
     {
       "path": "./tsconfig.spec.json"
+    },
+    {
+      "paths": {
+        "src/*": ["./src/*"]
+      } 
     }
   ],
   "compilerOptions": {
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "paths": {
+      "@common/*": ["../common/*"]
+    }
   }
 }
