@@ -23,4 +23,17 @@ export class UserController {
       throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
     }
   }
+
+  @Post('forgot-password')
+  async forgotPassword(@Body('email') email: string) {
+    await this.userService.sendPasswordReset(email);
+    return { message: 'Password reset link sent' };
+  }
+
+  @Post('reset-password')
+  async resetPassword(@Body() resetDto: { token: string, newPassword: string }) {
+    await this.userService.resetPassword(resetDto.token, resetDto.newPassword);
+    return { message: 'Password has been reset' };
+  }
+
 }

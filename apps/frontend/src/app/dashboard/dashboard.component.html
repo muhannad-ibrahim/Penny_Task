@@ -1,0 +1,10 @@
+<div>
+  <h1>Welcome to the Dashboard</h1>
+
+  <button (click)="logout()">Logout</button>
+
+  <h2>List of Data:</h2>
+  <ul>
+    <li *ngFor="let item of items">{{ item.name }}</li>
+  </ul>
+</div>
