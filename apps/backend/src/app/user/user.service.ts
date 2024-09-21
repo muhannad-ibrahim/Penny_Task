@@ -4,12 +4,14 @@ import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { User } from './user.schema';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
     @Inject(forwardRef(() => JwtService)) private jwtService: JwtService,
+    private authService: AuthService,
   ) {}
 
   async findAll(): Promise<User[]> {
@@ -37,7 +39,6 @@ export class UserService {
     return null;
   }
 
-  // Forgot password implementation
   async sendPasswordReset(email: string) {
     const user = await this.userModel.findOne({ email });
     if (!user) throw new Error('No user found');
@@ -46,9 +47,9 @@ export class UserService {
     user.resetPasswordToken = token;
     user.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour expiry
     await user.save();
+    await this.authService.sendResetPasswordEmail(email, token);
 
-    // You would use a real email service like SendGrid here
-    console.log(`Reset password link: http://localhost:4200/reset-password?token=${token}`);
+    console.log(`Reset password link: ${token}`);
   }
 
   async resetPassword(token: string, newPassword: string) {
@@ -65,7 +66,7 @@ export class UserService {
   async findByResetPasswordToken(token: string): Promise<User | undefined> {
     return this.userModel.findOne({
       resetPasswordToken: token,
-      resetPasswordExpires: { $gt: new Date() }, // Token must be valid and not expired
+      resetPasswordExpires: { $gt: new Date() },
     }).exec();
   }
   
