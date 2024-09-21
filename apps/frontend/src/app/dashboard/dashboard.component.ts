@@ -13,17 +13,19 @@ import { HttpClient } from '@angular/common/http';
 })
 export class DashboardComponent implements OnInit {
   items: any[] = [];
+  loggedInUser: string | null = '';
 
   constructor(private authService: AuthService, private http: HttpClient) {}
 
   ngOnInit(): void {
     this.fetchData();
+    this.loggedInUser = this.authService.getLoggedInUser();
   }
 
   fetchData() {
     const token = this.authService.getToken();
     if (token) {
-      this.http.get('http://localhost:3000/api/data', {
+      this.http.get('http://localhost:3000/api/product', {
         headers: { Authorization: `Bearer ${token}` },
       }).subscribe(
         (data: any) => {

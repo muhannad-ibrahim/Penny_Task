@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root',
@@ -29,6 +31,18 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
+  getDecodedToken() {
+    const token = this.getToken();
+    if (token) {
+      return jwtDecode(token);
+    }
+    return null;
+  }
+
+  getLoggedInUser() {
+    const decodedToken = this.getDecodedToken();
+    return decodedToken ? (decodedToken as any).email : null;
+  }
 
   isLoggedIn(): boolean {
     const token = this.getToken();
